@@ -31,7 +31,7 @@
             document.getElementById("status").textContent = "Processing...";
 
             // Make an HTTP request to the backend to send the solution
-            fetch("http://127.0.0.1:5000/trigger_script", {
+            fetch("https://leetcode-auto.onrender.com/trigger_script", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
