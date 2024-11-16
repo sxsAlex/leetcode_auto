@@ -1,0 +1,11 @@
+env/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store  # For macOS users
+*.log
+.env       
+github/
+chromedriver-win64/
+cookies.json
+leetcode.py

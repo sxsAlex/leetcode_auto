@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Script Trigger</title>
+</head>
+<body>
+    <h1>LeetCode Problem Helper</h1>
+
+    <!-- Input for the solution -->
+    <h2>Enter Solution:</h2>
+    <textarea id="solutionInput" rows="10" cols="50" placeholder="Paste your formatted solution here..."></textarea>
+    <br>
+    <button id="submitSolution">Submit Solution</button>
+
+    <p id="status"></p>
+
+    <script>
+        document.getElementById("submitSolution").addEventListener("click", function(event) {
+            event.preventDefault();
+
+            // Get the solution text from the textarea
+            const solutionText = document.getElementById("solutionInput").value;
+
+            if (!solutionText) {
+                document.getElementById("status").textContent = "Please enter a solution.";
+                return;
+            }
+
+            document.getElementById("status").textContent = "Processing...";
+
+            // Make an HTTP request to the backend to send the solution
+            fetch("http://127.0.0.1:5000/trigger_script", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ solution: solutionText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("status").textContent = "Script executed successfully!";
+            })
+            .catch(error => {
+                document.getElementById("status").textContent = "Error: " + error.message;
+            });
+        });
+    </script>
+</body>
+</html>
