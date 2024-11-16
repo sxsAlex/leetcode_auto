@@ -25,15 +25,18 @@ load_dotenv()
 
 
 app = Flask(__name__)
-CORS(app)  # Allow all origins
+CORS(app, resources={r"/trigger_script": {"origins": "https://sxsalex.github.io"}})
 
 @app.route("/")
 def home():
     return "Home page"
 
-@app.route("/trigger_script", methods=["POST"])
+@app.route("/trigger_script", methods=["POST", "OPTIONS"])
 def trigger_script():
     print("script is triggered")
+    if request.method == "OPTIONS":
+        # Handle the OPTIONS request (CORS pre-flight)
+        return '', 200  # Respond with 200 OK for OPTIONS
     # Get the problem text from the request
     data = request.get_json()
     solution_text = data.get("solution")
@@ -47,9 +50,10 @@ def trigger_script():
         #chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.97 Safari/537.36")
         chrome_options.add_argument("--headless")  # Run in headless mode if you don't want to see the browser
         #service = Service("D:\Program Files (x86)\\repos\leetcode\leetcode_auto\chromedriver-win64\chromedriver.exe")
+        print("Launching browser...")
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
-        print("Launching browser...")
+        
         # Launch browser
         #driver = webdriver.Chrome(service=service, options=chrome_options)
         print("opening leetcode...")
@@ -80,13 +84,13 @@ def trigger_script():
 
         print("opening the problem")
         # Go to the daily challenge
-        driver.get("https://leetcode.com/problems/add-two-numbers/")
-        time.sleep(3)
+        # driver.get("https://leetcode.com/problems/add-two-numbers/")
+        # time.sleep(3)
 
         # # Open the problem
-        # daily_link = driver.find_element(By.CLASS_NAME, "daily-question").get_attribute("href")
-        # driver.get(daily_link)
-        # time.sleep(3)
+        daily_link = driver.find_element(By.CLASS_NAME, "daily-question").get_attribute("href")
+        driver.get(daily_link)
+        time.sleep(3)
 
         # Paste solution
         driver.find_element(By.XPATH, "/html/body/div[1]/div[2]/div/div/div[4]/div/div/div[8]/div/div[1]/div[1]/div[1]/div/div/div[1]/div/button").click()
@@ -103,9 +107,9 @@ def trigger_script():
 
         print("submitting solution")
 
-        # # Submit solution
-        # driver.find_element(By.CLASS_NAME, "submit__2ISl").click()
-        # time.sleep(5)
+        # Submit solution
+        driver.find_element(By.XPATH, "/html/body/div[1]/div[2]/div/div/div[3]/div/div/div[1]/div/div/div[2]/div/div[2]/div/div[3]/div[3]/div/button").click()
+        time.sleep(5)
 
         driver.quit()
         return jsonify({"message": "Script executed successfully!"})
